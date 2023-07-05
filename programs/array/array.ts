@@ -10,3 +10,5 @@ a8[2] = 45;
 const a16 = new Uint16Array(a);
 a16[2] = 0x4545;
 console.log(a); // ArrayBuffer { [Uint8Contents]: <2d 00 2d 00 45 45>, byteLength: 6 }
+
+// a + width (size of the type) * offset
