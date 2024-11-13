@@ -23,6 +23,7 @@ class TreeNode:
 
 # O(n) time, O(n) space (due to stack frames being proportional to every node)
 # Used preorder traversal root -> left -> right
+# Goes to each subtree and finds the maximum depth between branches
 class Solution:
     def maxDepth(self, root: Optional[TreeNode]) -> int:
         # Base case leaf
