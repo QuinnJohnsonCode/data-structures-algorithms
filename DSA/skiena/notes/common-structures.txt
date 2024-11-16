@@ -1,0 +1,23 @@
+Permutations: Arrangments or orderings of items
+Ex: {1, 2, 3, 4} and {4, 3, 2, 1}
+Keywords for Identification: "arrangement", "tour", "ordering", "sequence"
+
+Subsets: Represent selections from a set of items
+Ex: {1, 3, 4} and {2} are subsets of the first four integers
+Order doesn't matter {1, 2} and {2, 1} are considered identical
+Keywords for Identification: "cluster", "collection", "committee", "group", "packaging", "selection"
+
+Trees: Represent hierarchical relationships between items
+Keywords for Identification: "hierarchy", "dominance relationship", "ancestor/descendant relationship", "taxonomy"
+
+Graphs: Represent relationships between arbitrary pairs of objects
+Keywords for Identification: "network", "circuit", "web", "relationship"
+
+Points: Represent locations in some geometric space
+Keywords for Identification: "sites", "positions", "data records", "locations"
+
+Polygons: Represent regions in some geometric space
+Keywords for Identification: "shapes", "regions", "configurations", "boundaries"
+
+Strings: Represent sequences of characters or patterns
+Keywords for Identification: "text", "characters", "patterns", "labels"
