@@ -1,0 +1,440 @@
+# 2024-10-18
+- Begin LeetCode 75
+- Attempting 605. Can Place Flowers (Easy)
+	- Finished (Solved without assistance)
+	- Takeaways:
+		- Greedy Algorithm
+		- If we can plant, we should plant a flower
+		- Validate edge cases, length was a factor
+		- Required three submissions
+		- First problem was n equaling 0
+			- Obviously if n == 0, we don't have to plant any and will always be true
+		- Second problem was oob check with length in canPlant()
+			- If length == 1 and flowerbed[i] is 0, we can plant at least one plant
+			- Could be made even better if length is incorporated in check
+- Attempting 345. Reverse Vowels of a String (Easy)
+	- Finished (Solved without assistance, Optimized with assistance)
+	- Takeaways:
+		- Simple double pointer algorithm
+		- Start/End pointers
+		- Loop through until start < end
+		- Loop through until start and end are both vowels
+			- Bound check along the way (start < end)
+		- When both are vowels, free to swap
+		- Takeaways:
+			- Solution was initially optimal but was getting consistent low runtimes
+			- Modified to look for vowels first and then just swap, preventing one extra check
+				- Still didn't fix the runtime but probably was a better solution
+			- Initially tried swapping characters at their indices,
+				- Strings are immutable thus implemented a string slice solution:
+					- s = s[:pos] + s[char] + [pos + 1:]
+				- This worked, but was the culprit of the low runtimes
+			- Turn the string into a list and swap traditionally
+			- Use ''.join(list) to turn into a string at the end
+			- Drastically improved runtime
+- Attempting 238. Product of Array Except Self (Medium)
+	- Have tried in the past, failed to solve at the time
+	- Finished (Failed to solve, looked at editorial)
+	- Takeaways:
+		- Difficult to find solution, but with Wikipedia's article on Prefix Sums, it's possible
+		- Prefix Sum formula is prefix[i] = prefix[i - 1] + nums[i]
+		- Look at the question from an aerial view, doing the multiplication manually and seeing what to store
+		- Store product left of the current i
+		- Store product right of the current i
+		- Multiply these stores together
+		- Optimizing for space:
+			- Can optimize for space by using the final answer array to contain the left prefix values
+			- As you're calculating the right prefix values, store them in another variable called R and store the answer in the answer array
+
+# 2024-10-19
+- Attempting 334. Increasing Triplet Subsequence (Medium)
+	- Finished (Solved with no assistance)
+	- Takeaways:
+		- Initial approach only considered i, j, k being one apart from each other
+		- Implemented brute force n^3 algorithm, obviously way too slow but would've been the correct solution as well
+		- Mulled over possibilities for a day
+		- Thought that because the question asks for O(n) time and O(1) space, no map nor nested loops
+			- If we go left to right, we know that i, j, k indice order will be maintained, thus we only need to maintain nums[i] < nums[j] < nums[k]
+			- We can store i and j values in the minimum locations and select them when they come up
+			- So if we see an nums[i] that is smaller than i, set i equal to it and go to the next number
+			- If the number is larger than i, but smaller than j, set j equal to nums[i] and go to the next number
+			- If neither of these conditions force the next number, we know that the next number must be in a larger index than the previously stored two numbers and is also larger in value than the previously stored two numbers
+				- We can then return true, as we've found our i, j, k that work
+				- If the loop completes without hitting this state, we return false
+			- The big leap in logic is that by scanning left to right, the index order is maintained as i (current index) is > i -1 (previous indexes)
+	- Proud of myself on this one!
+- Attempting 443. String Compression (Medium)
+	- Finished (Failed to solve)
+	- Takeaways:
+		- A simple looking problem on the surface, yet overcomplicated it to the max
+		- Bound checking was a problem, my solution worked on all but the last digit
+		- When scanning, it should look for digits that are the same rather than different, this reduces the pointers needed
+		- Use while loops to have more control over where the pointer is lying
+		- Use string manipulation to quickly fill a list
+		- Chunk up the problem like so,
+			- We need to loop through each character, create an i to store the position
+			- Set group_length = 1, as we know there will be at least one character
+			- Loop through characters that are the same, incrementing group_length as we go along
+			- Use a second pointer called res to keep track of where the overwriting should take place
+			- When the overwriting has been done, either for a single character or a character + digits, move i up by group_length
+	- Definitely a reasonable question and didn't have an awful approach, but felt like I was just stamping out edges as they came along
+		- Instead of doing that, in the future it might be better to rethink the entire approach if things are not working
+		- For two pointer problems, a while loop may be more useful as it is easier to control the index value
+- Attempting 283. Move Zeroes (Easy)
+	- Finished (Solved without assistance)
+	- Takeaways:
+		- Very easy to solve problem, multiple ways to solve it
+		- Possibly could be made even faster by swapping up 0's
+		- My implementation was string manipulation
+			- Go through the array moving the non-zero numbers to the first indexes
+			- If it's a 0, increase the count variable
+			- At the end, overwrite nums[-count:] positions to [0] * count
+		- This implementation still registered as very quick and remains O(n)
+- Attempting 392. Is Subsequence (Easy)
+	- Finished (Solved without assistance)
+	- Takeaways:
+		- Easy solution to find the greedy algorithm
+			- Walk through t, while keeping track of position in s
+			- If the t's value in the position equals s's value in the position, we can increment s
+			- Before checking for equality, check if we've reached our end case, that is the position we are in for s is at the end of s (i.e. j == len(s))
+			- At the end, potentially we will have missed one check, thus we should return j == len(s) one more time
+		- The editorial has a very good explanation on using a hashmap to reduce the time taken if t will be read in once, but multiple s's will be read in
+			- Because we only need to read in t once, the O(|T|) will be amortized
+			- We can then store indexes in order for each separate character
+			- Either use linear search for O(|T|) or binary search for O(log |T|) for a final time complexity of O(|T| + |S| * log (|T|))
+		- It also has a good explanation of how a DP solution using edit distance can be used to solve this problem
+			- Create a table and fill it with the initial 0's
+			- Check the every character in the row against a column and increment the previous column/row on the diagonal if they match (col - 1, row - 1), otherwise take the max of the previous column/row (col -1, row) (col, row - 1)
+			- Complexity is O(|T| * |S|) as every character in s needs to be compared to every character in t
+			- This is actually a sub-optimal solution only to show the use of DP in a problem like this
+- Attempting 11. Container With Most Water (Medium)
+	- Finished (Solved with Hint #2)
+	- Takeaways:
+		- The first challenge is to write a function that accurately can calculate the water between two points
+		- This is a two pointer solution with one pointing at the start and one pointing at the end
+		- To calculate the water between two points,
+			- We take the min of the two heights at the points min(height[start], height[end])
+			- Then we multiple that value by the distance between them, i.e. end - start
+				- min(height[start], height[end]) * end - start
+		- The loop is start < end as we cannot have an end point after a start point for some sort of negative space box
+			- First calculate the water using your calculateWater function you just implemented
+			- Check if that water count is greater than the max_water you've stored
+			- Then move whichever pointer is pointing to the lowest height of water, either start inwards (start + 1), or end inwards (end - 1), or both if they're equal, (start - 1, end - 1)
+		- At the end of the loop, we've calculated the max_water, so we can return it
+	- Despite having the hint, I'm very proud that I got the correct formula for calculating the water and the initial implementation of a two pointer system
+
+# 2024-10-21
+- Attempting 1679. Max Number of K-Sum Pairs (Medium)
+	- Finished (Solved with Two Pass solution)
+	- Takeaways:
+		- When filling a hashtable from left to right and then re going over it, it's often possible to implement a Single Pass solution
+		- My initial solution was to keep a list of indices for each number and to pop values when they've been seen
+			- This solution was overengineered and unnecessary despite being O(n) time complexity
+		- Better than my solution, it was more efficient to store the number and the frequency of it as if the frequency was greater than 0, we knew we had another number to take away, allowing an operation increase
+		- This problem was interesting because depending on how you wanted to approach it, you could either end up with an O(N) time complexity with O(N) space complexity if you chose to hash the values, or you could have O(N log N) time complexity with O(1) space complexity if you chose to sort and have a two pointer solution
+		- I lean a little more towards better time complexities so the hashtable had the better solution for me
+		- The final algorithm is as follows
+			- Loop through all the values in nums
+			- Store the current number (curr) and the target
+				- target = k - curr
+			- If target was in our dictionary and the frequency was greater than 0,
+				- Reduce the frequency of the target by one and increase the number of operations by one
+			- Otherwise, check if curr is in the dictionary, if not, add it and set it's frequency to 1, if it is, increment it's frequency by 1
+			- Return operations
+	- Wrote a working solution by myself, but definitely could've improved it, no hints required
+	- Simple algorithm at it's core, mostly an extended 2Sum
+- Attempting 643. Maximum Average Subarray I (Easy)
+	- Finished (Solved with no assistance)
+	- Takeaways:
+		- This should've been an easy problem to solve but struggled
+		- Moving the sliding window up while maintaining a running sum proved challenging as the indices that we were targeting had to be mathematically calculated
+		- Algorithm:
+			- Set sum = sum(nums[0:k]) or sum(nums[:k])
+				- This will sum up the first k -1 elements
+			- Set max_average = sum / k
+			- Loop through elements from k to len(nums)
+				- Set sums = sums + nums[i] + nums[i - k]
+					- This keeps a running sum going
+					- The first term is of course the sum we've already seen
+					- The second (nums[i]) is the current number we're looking at
+					- The third (nums[i - k]) is the number on the outside of the window, which we need to deduct from our running sum as it isn't in the window
+				- Then we set max_average = max(sums / k, max_average) to take the larger of the two averages
+	- My initial solution of using a lagging pointer and a pointer that moves ahead would've worked, but it was easier to visualize starting from the end of the sliding window with the first k - 1 terms already summed up
+	- Don't be afraid to change an approach, especially if it seems to be overcomplicated or with a lot of edge guarding where off by one errors are common
+	- Slight optimization: Divide max_sum by k at the end to achieve the same result, reducing the number of division operations required
+- Attempting 1456. Maximum Number of Vowels in a Substring of Given Length (Medium)
+	- Finished (Solved without assistance)
+	- Takeaways:
+		- After solving 643 (Maximum Average Subarray), this one was super easy
+		- Easily identified a sliding window with k
+		- Modified the previous problem by counting up if it sees a vowel and counting down if it loses a vowel
+		- Algorithm:
+			- Count up the first window of elements, checking each between 0 and k - 1 if it is a vowel, and increment the counter
+			- Set the max count to this count
+			- Loop through the subsequent windows
+				- If s[i] is a vowel, count up
+				- If s[i - k] was a vowel, count down
+				- Store the new maximum
+		- The slight speed advantage I gained after the problem was solved was by using a set to store the letters rather than just a standard python list
+			- Faster O(1) checks to see if the letter is in the vowel list
+		- May have been a more challenging problem if it wasn't so similar to the previous, should retry this one in a couple weeks to see if I remember the pattern or can re-come up with it
+
+# 2024-10-22
+- Attempting 1004. Max Consecutive Ones III (Medium)
+	- Finished (Failed to solve, looked at editorial)
+	- Takeaways:
+		- Couldn't get any ground on the question even after the hints, despite being good hints
+		- Algorithm:
+			- Keep track of the number of zeroes in the window
+			- The window is going to grow and shrink dynamically
+				- The for loop's iterator will control the right side and a second pointer is used to get the boundary and is initially 0 (left)
+			- First check if the new number is a 0, if it is, increment the number of zeroes
+			- Then use a while loop to adjust the left boundary, ensure the left remains less than our right boundary and that the number of zeroes is greater than k
+				- If the number being thrown away nums[left] is a 0, decrease the number of zeroes
+				- Then increment the left pointer
+			- Then update max_ones by doing max_ones = max(max_ones, right - left + 1)
+	- Definitely retry this one, poor performance
+	- What is the longest subarray that contains at most k zeros?
+- Attempting 1493. Longest Subarray of 1's After Deleting One Element (Medium)
+	- Finished (Solved with no assistance)
+	- Takeaways:
+		- This problem is a modified 1004, where k = 1 at all times
+		- Instead of right - left + 1, compare max_ones to right - left
+		- Constrict the window when there are more than one zero in the window
+		- Algorithm:
+			- Initialize num_of_zeroes, left and max_ones to zero
+				- num_of_zeroes tracks the amount of zeroes in any given window
+				- left tracks the start of the window
+				- max_ones tracks the largest window we've seen so far
+			- Use a for loop to go through the values in nums
+				- If nums[i] == 0, increment num_of_zeroes
+				- Ensure the window has the correct number of zeroes in the window by using a while loop
+					- As long as num_of_zeroes is > 1 and left <= right,
+					- Decrement num_of_zeroes if nums[left] == 0
+					- Increment left += 1
+				- Reupdate the max_ones seen by doing max_ones = max(max_ones, right - left)
+	- I felt less accomplished solving this one on my own as it was so similar to 1004
+	- When looking for contiguous subarray's where only one number truly changes, a sliding window is ideal
+- Attempting 1732. Find the Highest Altitude (Easy)
+	- Finished (Solved with no assistance)
+	- Takeaways:
+		- Even if you didn't remember/know prefix sum, this solution is very easy to derive
+		- Simply keep a running sum of every altitude you've seen and ensure the max_altitude is the max between the current max_altitude and this new altitude sum
+	- Super easy problem to solve, not much to comment on
+- Attempting 724. Find Pivot Index (Easy)
+	- Solved in the past
+	- Finished (Failed to solve)
+	- Takeaways:
+		- Even with two arrays, I struggled to line up the numbers properly
+		- Instead of that, sum up the entire array and keep a left sum
+		- Loop through the values incrementing left sum as you go along
+			- if the leftsum == sum - leftsum - nums[i], we've found the index that matches and we can return
+				- By subtracting leftsum from sum we end up getting all the suffix numbers
+			- leftsum += nums[i] will ensure that leftsum contains all the other numbers
+	- Not having a good day with some of these problems, this one felt like a solution would've been easy, but I struggled to even come up with anything working :(
+- Attempting 2215. Find the Difference of Two Arrays (Easy)
+	- Finished (Solved with no assistance)
+	- Takeaways:
+		- Very easy problem, just throw the numbers in the array into 2 sets
+		- Once the numbers have been converted to sets, loop through each list and verify the number isn't in the opposite set and isn't in our return set
+		- Probably could use one less set, but this solution remains O(N + M) in both space and time complexity
+- Attempting 1207. Unique Number of Occurrences (Easy)
+	- Solved in the past
+	- Finished (Solved with no assistance)
+	- Takeaways:
+		- Easy problem
+		- Create a dictionary of elements and their occurrences/frequencies
+		- Create a set to determine uniqueness of frequencies seen thus far
+		- Loop through dictionary values and verify that the value is not in the set and then add it to the set
+			- If it is in the set, return False
+		- Return true if the loop terminates before hitting False
+
+# 2024-11-04
+- Attempting 1657. Determine if Two Strings Are Close (Medium)
+	- Finished ("Solved")
+	- Takeaways:
+		- My solution was convoluted and kept yielding 167/169 accepted test cases
+		- By breaking down the problem to two conditions, it was simplified drastically
+		- Despite this, I was having strange behaviour submitting/running locally
+			- Some times I would run, the test case would pass and sometimes it wouldn't, I figure this has something to do with hash ordering
+		- A better algorithm:
+			- Get the frequencies of each string
+			- Two conditions must be true
+				- They must share the same set of characters
+				- They must share the same frequencies (not necessarily character matching frequencies)
+			- Check to ensure the keys of each hashset equal each other (or don't equal each other)
+				- If they do not equal each other, return False, because no amount of transformation will change them
+			- Use sorted() with the hash values of each set to ensure that their frequencies are equal,
+				- If they are equal, return True
+				- If not, return False
+- Attempting 2352. Equal Row and Column Pairs (Medium)
+	- Finished (Solved without assistance)
+	- Takeaways:
+		- My solution worked but I initially doubted it due to it's n^2 efficiency
+			- Usually is a giveaway that your solution is not fast enough
+		- Instead, since it's a matrix question, we often have to go over n * m items to see everything, thus it'll be n^2 in this case as we have n x n matrices
+		- Algorithm
+			- We need to hash something, we can't hash lists, but we can hash tuples/strings
+			- Convert the rows to tuples, and set those as the keys, take the frequency of each tuple
+			- Go over all elements n x n to construct the columns, the important part is to transpose into gridji to properly get the columns
+			- Check the row_hash to see if this column exists and then add the frequency of it to the equal_pairs counter
+			- Return equal_pairs
+
+# 2024-11-08
+- Attempting 2390. Removing Stars From a String (Medium)
+	- Finished (Solved without assistance)
+	- Takeaways:
+		- Very simple stack solution, no given O(1) space solution, thus a second list can be used to store the desired characters
+		- Algorithm:
+			- Loop through all characters in s
+			- If we see a non-star character, push it to our list
+			- If we see the star character, do not push it and pop whatever was last on top
+			- Join the list at the end to a string
+		- Probably should classify this one as LC Easy, even figuring this one out on paper is simple
+		- Still challenging when to think if a solution has a better space complexity, stumped on trying to do it in place for a while rather than implementing this solution
+- Attempting 735. Asteroid Collision
+	- Finished (Failed to solve)
+	- Takeaways:
+		- Difficult to come up with a solution that covered all test cases
+		- Best on my own was ~245/270
+		- The edge case that was the problem was when to append to asteroid when the last was equal
+		- Editorial used a flag to denote this, if it gets triggered, the last asteroid to be checked was equal and thus should not be added either
+		- If the flag wasn't triggered, the loop finished either because the stack top was also negative or the stack was emptied
+		- In the case of the stack being emptied, we either had to append the asteroid if it was not equal to the last top, or just append
+		- After working this through for a little over an hour, this was definitely a difficult question for me to cover
+		- The clear initial issue was understanding that the collisions only happen when i is positive and i + 1 is negative (-> <-) thus a left, right collision
+		- Loop through your stack until all of the left, right collisions are satisfied or the top is larger than the current or the stack is empty
+		- Would love to try this one again in the future to see if edge cases can be ironed out
+
+# 2024-11-10
+- Attempting 394. Decode String (Medium)
+	- Finished (Failed to solve)
+	- Takeaways:
+		- Was on the right track with implementation but as always, tried to glue fixes onto edge problems which only made fixing them worse
+		- Had the right flow, needed to make the logical leap to not clear the stack and not use a second string to store the characters
+		- Instead of clearing the stack, we know that we'll never go past a left square bracket, thus when we join at the end, all square brackets should be gone, and we should only be left with the characters we needed
+		- Algorithm
+			- Loop through characters c in s
+			- Two control states
+				- If we see a right closing square bracket
+				- If we do not see a right closing square bracket
+			- If we see one
+				- Collect the temporary string within the stack
+					- This means looping backwards until we hit a left square bracket
+					- Build this string in reverse, i.e t_str = stack.pop + t_str
+				- Pop the left square bracket
+				- Collect the temporary integer from the left of the square bracket
+					- This means looping backwards until we hit a non-digit
+					- Build this string in reverse, i.e t_int = stack.pop + t_int
+				- Then using python's string manip, multiply t_int by t_str and append it to the back of the stack
+			- If we do not see one
+				- Append the character c
+			- At the end, return the stack as a string
+		- Little demoralizing on this one, best was about 17/28 test cases, but didn't make the leap to maintain the stack the entire time
+- Attempting 933. Number of Recent Calls (Easy)
+	- Finished (Solved without assistance)
+	- Takeaways:
+		- Nice and easy question to solve with a queue
+		- My initial implementation used a counter and a typical list to keep track of the positions that were invalidated and linearly search for the correct place
+		- While this yielded fast enough results, it's better to use a queue and to simply popleft() any elements that are less than our current t - 3000
+		- Algorithm
+			- self.requests should be a deque() (obtained from the collections lib)
+			- In ping()
+				- Append the current t
+				- Calculate our cutoff for start, (i.e start = t - 3000)
+				- Loop through all values less than this cutoff and pop them
+					- This looks something like while self.requests[0] < start
+						- self.requests.popleft()
+				- Then simply return the length of our requests
+- Attempting 649. Dota2 Senate (Medium)
+	- Finished (Failed to solve)
+	- Takeaways:
+		- Woof.
+		- Initial approach was non-existent, had no idea how to even start approaching
+		- Knew it had to be a queue and greedy
+		- Algorithm
+			- Put the indices of radiant senators and dire senators into the own queues
+			- Loop until one of the queues is empty
+				- Pop an index from each queue
+				- Compare the index sizes
+				- If an r_index is smaller than a d_index, we know that a radiant senator is going to have the opportunity to ban that dire senator at that index
+					- We removed both indices from the queues, but we have to put the radiant senator back in contention in this case
+					- We append this senator back the radiant queue by adding the r_index and the number of senators (n) ensuring that an entire turn will have to be taken before this r_index has another opportunity to ban/declare victory
+				- This works vice versa for if a d_index is smaller than an r_index
+			- Whichever queue still contains senators by the end of the loop is the winner
+		- The Greedy choice comes in knowing that a later senator never has an opportunity to ban an earlier senator and that earlier senator will always take the opportunity to knock off a later senator as it simply improves the odds of winning
+		- This was an incredibly hard question for me to get my footing for, all about learning though.
+- Attempting 2095. Delete the Middle Node of a Linked List (Medium)
+	- Finished (Solved, optimized with assistance)
+	- Takeaways:
+		- My initial solution worked but wasn't quite as optimal as Solution 2 from the editorial
+		- Initially I looped through the whole list to get a n
+		- I then found the middle position using python floor division n // 2
+		- From there, I went back through the LL to one before the middle position, thus getting the predecessor
+		- I could then set the predecessor's next to the current next next of the predecessor effectively removing the middle node
+		- This requires a full walkthrough of LL and then another half walk to get to the middle node
+			- This is still O(n) but in terms of operations this could be better
+		- Instead of this, the hare and tortoise two pointer approach can be used
+		- Algorithm
+			- Check if the head's next is None, if it is, return None as it implies the LL only has one element to remove (and thus the element will need to be removed)
+			- Set a slow pointer as the head and the fast pointer to two steps ahead of the head
+			- The trick is that the hare (fast) pointer will always be moved two steps for every one step the tortoise (slow) pointer takes
+			- This will leave the hare pointer in the n / 2 - 1 position at the end
+			- Loop until fast is None and fast.next is None (meaning we've hit the end of the LL)
+				- Each iteration move the slow pointer by one slow = slow.next
+				- Each iteration move the fast pointer by two fast = fast.next.next
+			- At the end, the slow pointer will contain the predecessor to the middle pointer
+			- At this point the process is the same as the initial solution
+				- slow.next = slow.next.next
+			- Return the head
+		- This solution only requires n / 2 steps to reach the middle, meaning we cut out an entire loop through the list
+		- Much more optimal, was thinking that there'd be a better was to implement when I was looking at it, but didn't jump to the hare and tortoise immediately
+		- Makes sense though and shows a good way to get the middle node of any LL in n / 2 steps, worth remembering
+
+# 2024-11-11
+- Attempting 328. Odd Even Linked List (Medium)
+	- Finished (Solved, optimized with assistance)
+	- Takeaways:
+		- After lots of finicking, I came up with a two pass solution to the problem which was inefficient
+		- My initial idea was to find the tail node and loop through the LL, setting the odd node's next to the next odd node (effectively removing the even node) and then appending the even node to the tail, all the while keeping track of how many numbers we've gone through
+			- Worked, but stupid solution
+		- ChatGPT provided this algorithm
+			- Return if it is a zero-value or one-value LL, no swaps need to be made
+			- Create three pointers
+				- odd = head
+				- even = head.next
+				- even_head = even (i.e. a pointer conserving the first even node prior to traversal)
+			- Loop through the LL while even and even.next still exist
+				- First, move the odd pointer along
+					- odd.next = even.next
+					- odd = odd.next
+				- Then, move the even pointer along
+					- even.next = odd.next
+					- even = even.next
+			- At the end of the loop, link the last odd node to the first node in the even list (even_head)
+				- odd.next = even_head
+		- This works in a single pass and is much clearer and has less room for bugs
+		- It works because we end up constructing a list with all even nodes (linked together via the even pointer) and all odd nodes (vice versa)
+		- Our leap needs to be the fact that we can store these nodes without having to allocate any extra space, which allows this solution to remain O(1) space complexity
+		- The second leap is that we need a way to get back to the top of the even nodes, by storing the head of the even node list
+		- I love this solution and it feels similar to the solution I provided but with far fewer ways for the program to fail (more bullet proof and more efficient)
+		- I used the debugger to implement my inefficient solution as I was having trouble avoiding circular node references, it allowed me to visualize it much better and I didn't struggle as hard after using it
+- Attempting 206. Reverse Linked List
+	- Finished (Failed to solve)
+	- Takeaways:
+		- Marked easy, couldn't get it
+		- Knew that the pointers had to be swapped at each place but couldn't get it working
+		- Implementation is a struggle with LL problems for me at the moment
+		- Algorithm
+			- Store the curr as head and set prev to None
+			- Loop through curr
+				- Store the next node after curr in a temporary pointer
+					- temp = curr.next
+				- Update curr's next to the previous node
+					- curr.next = prev
+				- Update prev to the current node
+					- prev = curr
+				- Update curr to the next node (stored temp)
+					- curr = temp
+		- I feel dumb.
+- 
